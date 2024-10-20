@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/slices/authSlice";
-import { useAppSelector } from '../store/hooks';
 
 interface signInForm {
   username: string;
@@ -9,7 +8,6 @@ interface signInForm {
 }
 function SignInForm() {
   const dispatch = useDispatch();
-    const token = useAppSelector((state) => state.auth.token);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +18,6 @@ function SignInForm() {
     setUsername(e.target.value);
   };
   
-  const handleButton = () =>{
-    console.log(token)
-  }
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const requestBody: signInForm = {
@@ -58,7 +53,6 @@ function SignInForm() {
   };
   return (
     <div className="container flex flex-col justify-center items-center p-2">
-      <button onClick={handleButton}>Handle the button</button>
       <h2 className="text-xl">Sign in</h2>
 
       <form
