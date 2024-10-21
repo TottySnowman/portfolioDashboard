@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { signIn } from "../store/slices/authSlice";
+import { AppDispatch, RootState } from "../store/store";
 
 interface signInForm {
   username: string;
   password: string;
 }
 function SignInForm() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
+   const authState = useSelector((state: RootState) => state.auth);
+
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,31 +28,7 @@ function SignInForm() {
       username: username,
       password: password,
     };
-    try {
-      const response = await fetch("http://localhost:6001/auth/signIn", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        // Dispatch the loginSuccess action with the token and user data
-        dispatch(
-          loginSuccess({
-            token: data.token,
-          }),
-        );
-      } else {
-        // Handle login error (e.g., invalid credentials)
-        console.error("Login failed");
-      }
-    } catch (error) {
-      console.error("Error during login", error);
-    }
+    dispatch(signIn(requestBody));
     console.log(requestBody);
   };
   return (
@@ -82,6 +62,9 @@ function SignInForm() {
           Log in
         </button>
       </form>
+      {authState.loading && <p>Loading...</p>}
+      {authState.error && <p>Error: {authState.error}</p>}
+      {authState.isAuthenticated && <p>Authenticated</p>}
     </div>
   );
 }
