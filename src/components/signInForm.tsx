@@ -29,7 +29,6 @@ function SignInForm() {
       password: password,
     };
     dispatch(signIn(requestBody));
-    console.log(requestBody);
   };
   return (
     <div className="container flex flex-col justify-center items-center p-2">
@@ -64,7 +63,7 @@ function SignInForm() {
       </form>
       {authState.loading && <p>Loading...</p>}
       {authState.error && <p>Error: {authState.error}</p>}
-      {authState.isAuthenticated && <p>Authenticated</p>}
+      {authState.isAuthenticated && <p>Hello {authState.username}</p>}
     </div>
   );
 }

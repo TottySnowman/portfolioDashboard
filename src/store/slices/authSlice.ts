@@ -5,6 +5,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  username:string | null
 }
 
 const initialState: AuthState = {
@@ -12,6 +13,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: false,
+  username: null
 };
 
 export const signIn = createAsyncThunk(
@@ -35,8 +37,7 @@ export const signIn = createAsyncThunk(
       }
 
       const data = await response.json();
-      console.log(data.token)
-      return data.token;
+      return data;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -48,14 +49,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Action to save the token in the state
-    loginSuccess: (state, action) => {
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
-    },
-    logout: (state) => {
-      state.token = null;
-      state.isAuthenticated = false;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -64,9 +57,10 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signIn.fulfilled, (state, action) => {
-        state.token = action.payload;
+        state.token = action.payload.token;
         state.loading = false;
         state.isAuthenticated = true;
+        state.username = action.payload.Username;
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
@@ -75,6 +69,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
 
 export default authSlice.reducer;
