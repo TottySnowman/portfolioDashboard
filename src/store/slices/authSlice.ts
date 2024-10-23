@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+const tokenFromStorage = localStorage.getItem('token');
+
 interface AuthState {
   token: string | null;
   loading: boolean;
@@ -9,12 +11,13 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: null,
+  token: tokenFromStorage ? tokenFromStorage : null,
   loading: false,
   error: null,
   isAuthenticated: false,
   username: null
 };
+
 
 export const signIn = createAsyncThunk(
   "auth/signIn",
@@ -61,6 +64,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.username = action.payload.Username;
+        localStorage.setItem('token', action.payload);
       })
       .addCase(signIn.rejected, (state, action) => {
         state.loading = false;
