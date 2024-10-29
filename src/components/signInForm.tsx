@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../store/slices/authSlice";
 import { AppDispatch, RootState } from "../store/store";
 import { useNavigate } from "react-router-dom";
+import { Button, TextField } from "@mui/material";
 
 interface signInForm {
   username: string;
@@ -46,28 +47,29 @@ function SignInForm() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-5 justify-center items-center border"
       >
-        <input
+        <TextField
           type="text"
-          className="form-control"
+          label="Username"
           id="username"
           placeholder="Username"
           value={username}
           onChange={handleUsernameChange}
           required
         />
-        <input
-          type="password"
-          className="form-control"
+        <TextField
           id="password"
+          label="Password"
+          variant="outlined"
           placeholder="Password"
+          type="password"
           value={password}
           onChange={handlePasswordChange}
           required
         />
 
-        <button type="submit" className="bg-sky-600 p-5 rounded-md">
-          Log in
-        </button>
+        <Button variant="contained" type="submit">
+          Sign in
+        </Button>
       </form>
       {authState.loading && <p>Loading...</p>}
       {authState.error && <p>Error: {authState.error}</p>}
