@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-interface Project{
-  ProjectID:number,
-  Name: string
+export interface Project {
+  ProjectID: number;
+  Name: string;
 }
 interface ProjectState {
   projects: Project[];
@@ -18,12 +18,43 @@ const initialState: ProjectState = {
 
 export const getProjects = createAsyncThunk(
   "projects/fetchProjects",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
+      const authState = getState().auth; // Access token from auth state
+    const token = authState.token;
+      console.log(token)
       const response = await fetch("http://localhost:6001/project", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        return rejectWithValue(error);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const deleteProject = createAsyncThunk(
+  "projects/deleteProject",
+  async (id, { rejectWithValue, getState }) => {
+    try {
+      const authState = getState().auth;
+      const token = authState.token;
+      console.log(token)
+      const response = await fetch("http://localhost:6001/project/" + id, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
       });
 
@@ -57,6 +88,20 @@ const projectSlice = createSlice({
         state.projects = action.payload;
       })
       .addCase(getProjects.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteProject.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.projects = state.projects.filter(
+          (project) => project.ProjectID !== action.payload,
+        );
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

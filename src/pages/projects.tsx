@@ -13,7 +13,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteButton from "../components/project/deleteButton";
 
 const Projects = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,6 +47,7 @@ const Projects = () => {
             <TableCell>Status</TableCell>
             <TableCell>Displayed</TableCell>
             <TableCell></TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -68,8 +70,14 @@ const Projects = () => {
                     editProject(project.ProjectID);
                   }}
                 >
-                  <EditIcon/>
+                  <EditIcon />
                 </IconButton>
+              </TableCell>
+              <TableCell>
+                <DeleteButton
+                  ProjectID={project.ProjectID}
+                  Name={project.Name}
+                />
               </TableCell>
             </TableRow>
           ))}
