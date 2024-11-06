@@ -20,8 +20,8 @@ export const getProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue, getState }) => {
     try {
-      const authState = getState().auth; // Access token from auth state
-    const token = authState.token;
+      const authState = getState().auth;
+      const token = authState.token;
       console.log(token)
       const response = await fetch("http://localhost:6001/project", {
         method: "GET",
@@ -45,11 +45,10 @@ export const getProjects = createAsyncThunk(
 
 export const deleteProject = createAsyncThunk(
   "projects/deleteProject",
-  async (id, { rejectWithValue, getState }) => {
+  async (id: number, { rejectWithValue, getState }) => {
     try {
       const authState = getState().auth;
       const token = authState.token;
-      console.log(token)
       const response = await fetch("http://localhost:6001/project/" + id, {
         method: "DELETE",
         headers: {
@@ -63,8 +62,7 @@ export const deleteProject = createAsyncThunk(
         return rejectWithValue(error);
       }
 
-      const data = await response.json();
-      return data;
+      return id;
     } catch (error) {
       return rejectWithValue(error);
     }

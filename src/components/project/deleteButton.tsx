@@ -1,15 +1,21 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
-import { Project } from "../../store/slices/projectSlice";
+import { deleteProject, Project } from "../../store/slices/projectSlice";
 import { useState } from "react";
+import { AppDispatch } from "../../store/store";
+import { useDispatch } from "react-redux";
 const DeleteButton = (project: Project) => {
 
+  const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const openConfirmationModal = () => {
     setOpen(true);
   };
-  const handleConfirmButton = async () => { };
+
+  const handleConfirmButton = async () => {
+    dispatch(deleteProject(project.ProjectID));
+  };
 
   const style = {
     position: "absolute",
