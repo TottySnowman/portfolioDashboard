@@ -5,7 +5,6 @@ import { useState } from "react";
 import { AppDispatch } from "../../store/store";
 import { useDispatch } from "react-redux";
 const DeleteButton = (project: Project) => {
-
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -52,7 +51,7 @@ const DeleteButton = (project: Project) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             Are you sure you want to delete project {project.Name}?
           </Typography>
-          <div className="w-full flex gap-2 mt-5">
+          <div className="w-full flex gap-2 mt-5 justify-end">
             <Button variant="contained" onClick={() => handleConfirmButton()}>
               Delete
             </Button>
