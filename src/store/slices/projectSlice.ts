@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export interface Project {
   ProjectID: number;
@@ -20,7 +21,7 @@ export const getProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue, getState }) => {
     try {
-      const authState = getState().auth;
+      const authState = (getState() as RootState).auth;
       const token = authState.token;
       console.log(token)
       const response = await fetch("http://localhost:6001/project", {
@@ -47,7 +48,7 @@ export const deleteProject = createAsyncThunk(
   "projects/deleteProject",
   async (id: number, { rejectWithValue, getState }) => {
     try {
-      const authState = getState().auth;
+      const authState = (getState() as RootState).auth;
       const token = authState.token;
       const response = await fetch("http://localhost:6001/project/" + id, {
         method: "DELETE",
