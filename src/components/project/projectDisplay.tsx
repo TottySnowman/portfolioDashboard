@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
@@ -59,10 +58,12 @@ const ProjectDisplay = () => {
               onClick={() => displayProject(project.ProjectID)}
               style={{ cursor: "pointer" }}
             >
+              <TableCell className="w-1/6 h-1/2">
+                <img src={project.Logo_Path} />
+              </TableCell>
               <TableCell>{project.Name}</TableCell>
-              <TableCell>{project.Name}</TableCell>
-              <TableCell>{project.Name}</TableCell>
-              <TableCell>{project.Name}</TableCell>
+              <TableCell>{project.DevDate.toString()}</TableCell>
+              <TableCell>{project.Status.Status}</TableCell>
               <TableCell>{project.Name}</TableCell>
               <TableCell>
                 <IconButton
@@ -75,10 +76,7 @@ const ProjectDisplay = () => {
                 </IconButton>
               </TableCell>
               <TableCell>
-                <DeleteButton
-                  ProjectID={project.ProjectID}
-                  Name={project.Name}
-                />
+                <DeleteButton {...project} />
               </TableCell>
             </TableRow>
           ))}

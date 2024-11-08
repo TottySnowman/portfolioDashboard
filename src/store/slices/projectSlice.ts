@@ -1,9 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
+export interface ProjectStatus {
+  StatusID: number;
+  Status: string;
+}
 export interface Project {
   ProjectID: number;
   Name: string;
+  About: string;
+  Demo_Link: string;
+  Github_Link: string;
+  Status: ProjectStatus;
+  Logo_Path: string;
+  DevDate: Date;
 }
 interface ProjectState {
   projects: Project[];
@@ -138,7 +148,7 @@ const projectSlice = createSlice({
       })
       .addCase(createProject.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action)
+        console.log(action);
         //state.projects = state.projects.push(action.payload)
       })
       .addCase(createProject.rejected, (state, action) => {
