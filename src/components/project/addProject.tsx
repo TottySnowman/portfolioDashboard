@@ -11,6 +11,9 @@ const projectSchema = yup
   .object({
     title: yup.string().required("Title is required"),
     description: yup.string().required("Description is required"),
+    gitHubLink: yup.string().nullable(),
+    demoLink: yup.string().nullable(),
+    devDate: yup.date().required("Dev Date is required").default(() => new Date()),
   })
   .required();
 type FormData = yup.InferType<typeof projectSchema>;
@@ -38,13 +41,29 @@ const AddProject = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<FormData>({
     resolver: yupResolver(projectSchema),
+    defaultValues: {
+      devDate: new Date()
+    },
   });
+  const devDateValue = watch("devDate")
+    ? new Date(watch("devDate")).toISOString().split("T")[0]
+    : "";
+
   const onSubmit = (data: FormData) => {
-    var project:Project = {
-      ProjectID: 12,
-      Name: data.title
+    var project:Omit<Project, "ProjectID"> = {
+      Name: data.title,
+      About: data.description,
+      Github_Link: data.gitHubLink ? data.gitHubLink : null,
+      Demo_Link: data.demoLink ? data.demoLink : null,
+      DevDate: data.devDate,
+      Logo_Path: null,
+      Status:{
+        Status: "",
+        StatusID: 1
+      }
     }
     dispatch(createProject(project));
   };
@@ -91,6 +110,43 @@ const AddProject = () => {
                 {...register("description")}
               />
               <p className="text-red-500">{errors.description?.message}</p>
+            </div>
+
+            <div className="flex flex-col">
+              <TextField
+                id="outlined-basic"
+                label="Demo Link"
+                variant="outlined"
+                multiline
+                error={errors.demoLink?.message != null}
+                {...register("demoLink")}
+              />
+              <p className="text-red-500">{errors.demoLink?.message}</p>
+            </div>
+
+            <div className="flex flex-col">
+              <TextField
+                id="outlined-basic"
+                label="Github Link"
+                variant="outlined"
+                multiline
+                error={errors.gitHubLink?.message != null}
+                {...register("gitHubLink")}
+              />
+              <p className="text-red-500">{errors.gitHubLink?.message}</p>
+            </div>
+
+            <div className="flex flex-col">
+              <TextField
+                id="outlined-basic"
+                label="Dev Date"
+                variant="outlined"
+                type="date"
+                error={errors.devDate?.message != null}
+                defaultValue={devDateValue}
+                {...register("devDate")}
+              />
+              <p className="text-red-500">{errors.devDate?.message}</p>
             </div>
 
             <div className="w-full flex gap-2 mt-5 justify-end">

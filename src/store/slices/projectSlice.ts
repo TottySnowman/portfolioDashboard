@@ -9,10 +9,10 @@ export interface Project {
   ProjectID: number;
   Name: string;
   About: string;
-  Demo_Link: string;
-  Github_Link: string;
+  Demo_Link: string | null;
+  Github_Link: string | null;
   Status: ProjectStatus;
-  Logo_Path: string;
+  Logo_Path: string | null;
   DevDate: Date;
 }
 interface ProjectState {
@@ -82,7 +82,10 @@ export const deleteProject = createAsyncThunk(
 
 export const createProject = createAsyncThunk(
   "projects/createProject",
-  async (project: Project, { rejectWithValue, getState }) => {
+  async (
+    project: Omit<Project, "ProjectID">,
+    { rejectWithValue, getState },
+  ) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
