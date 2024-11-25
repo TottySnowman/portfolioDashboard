@@ -2,42 +2,32 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { logout } from "./authSlice";
 
-export interface ProjectStatus {
-  StatusID: number;
-  Status: string;
+
+export interface Tag {
+  TagId: number
+  Tag: string
+  TagIcon: string
 }
 
-export interface Project {
-  ProjectID: number;
-  Name: string;
-  About: string;
-  Demo_Link: string | null;
-  Github_Link: string | null;
-  Status: ProjectStatus;
-  Logo_Path: string | null;
-  DevDate: Date;
-  Hidden: boolean;
-}
-
-interface ProjectState {
-  projects: Project[];
+interface TagState {
+  tags: Tag[];
   loading: boolean;
   error: string | null;
 }
 
-const initialState: ProjectState = {
-  projects: [],
+const initialState: TagState = {
+  tags: [],
   loading: false,
   error: null,
 };
 
-export const getProjects = createAsyncThunk(
-  "projects/fetchProjects",
+export const getTags = createAsyncThunk(
+  "tags/fetchTags",
   async (_, { rejectWithValue, getState, dispatch }) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project", {
+      const response = await fetch("http://localhost:6001/tag", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,13 +53,13 @@ export const getProjects = createAsyncThunk(
   },
 );
 
-export const deleteProject = createAsyncThunk(
-  "projects/deleteProject",
+export const deleteTag = createAsyncThunk(
+  "tags/deleteTag",
   async (id: number, { rejectWithValue, getState, dispatch }) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project/" + id, {
+      const response = await fetch("http://localhost:6001/tag/" + id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -94,22 +84,22 @@ export const deleteProject = createAsyncThunk(
   },
 );
 
-export const createProject = createAsyncThunk(
-  "projects/createProject",
+export const createTag = createAsyncThunk(
+  "tags/createTag",
   async (
-    project: Omit<Project, "ProjectID">,
+    tag: Omit<Tag, "TagId">,
     { rejectWithValue, getState, dispatch },
   ) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project", {
+      const response = await fetch("http://localhost:6001/tag", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-        body: JSON.stringify(project),
+        body: JSON.stringify(tag),
       });
 
       if (response.status === 401) {
@@ -130,54 +120,55 @@ export const createProject = createAsyncThunk(
   },
 );
 
-const projectSlice = createSlice({
-  name: "projects",
+const tagSlice = createSlice({
+  name: "tags",
   initialState,
   reducers: {
     // Action to save the token in the state
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProjects.pending, (state) => {
+      .addCase(getTags.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getProjects.fulfilled, (state, action) => {
+      .addCase(getTags.fulfilled, (state, action) => {
         state.loading = false;
-        state.projects = action.payload;
+        state.tags = action.payload;
       })
-      .addCase(getProjects.rejected, (state, action) => {
+      .addCase(getTags.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(deleteProject.pending, (state) => {
+      .addCase(deleteTag.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteProject.fulfilled, (state, action) => {
+      .addCase(deleteTag.fulfilled, (state, action) => {
         state.loading = false;
-        state.projects = state.projects.filter(
-          (project) => project.ProjectID !== action.payload,
+        state.tags = state.tags.filter(
+          (tag) => tag.TagId !== action.payload,
         );
       })
-      .addCase(deleteProject.rejected, (state, action) => {
+      .addCase(deleteTag.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(createProject.pending, (state) => {
+      .addCase(createTag.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createProject.fulfilled, (state, action) => {
+      .addCase(createTag.fulfilled, (state, action) => {
         state.loading = false;
         console.log(action);
         //state.projects = state.projects.push(action.payload)
       })
-      .addCase(createProject.rejected, (state, action) => {
+      .addCase(createTag.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
   },
 });
 
-export default projectSlice.reducer;
+export default tagSlice.reducer;
+

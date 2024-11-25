@@ -1,7 +1,9 @@
+import TagDisplay from "../components/tags/tagDisplay";
+
 const Tags = () => {
   return (
-    <div>
-      <p>Tags</p>
+    <div className="container justify-center items-center">
+      <TagDisplay />
     </div>
   );
 };

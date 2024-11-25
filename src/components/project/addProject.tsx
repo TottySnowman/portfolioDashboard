@@ -60,8 +60,9 @@ const AddProject = () => {
       Demo_Link: data.demoLink ? data.demoLink : null,
       DevDate: data.devDate,
       Logo_Path: null,
+      Hidden: false,
       Status:{
-        Status: "",
+        Status: "On going",
         StatusID: 1
       }
     }

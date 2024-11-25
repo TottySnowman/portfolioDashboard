@@ -1,11 +1,13 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
-import { deleteProject, Project } from "../../store/slices/projectSlice";
 import { useState } from "react";
-import { AppDispatch } from "../../store/store";
-import { useDispatch } from "react-redux";
-const DeleteButton = (project: Project) => {
-  const dispatch: AppDispatch = useDispatch();
+
+export interface deleteObject {
+  deleteFunction: () => void;
+  displayName: string;
+}
+
+const DeleteButton = (objectToDelete: deleteObject) => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const openConfirmationModal = () => {
@@ -13,7 +15,7 @@ const DeleteButton = (project: Project) => {
   };
 
   const handleConfirmButton = async () => {
-    dispatch(deleteProject(project.ProjectID));
+    objectToDelete.deleteFunction();
   };
 
   const style = {
@@ -49,7 +51,7 @@ const DeleteButton = (project: Project) => {
             Delete Project
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Are you sure you want to delete project {project.Name}?
+            Are you sure you want to delete {objectToDelete.displayName}?
           </Typography>
           <div className="w-full flex gap-2 mt-5 justify-end">
             <Button variant="contained" onClick={() => handleConfirmButton()}>

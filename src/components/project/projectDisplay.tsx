@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { getProjects } from "../../store/slices/projectSlice";
+import { deleteProject, getProjects } from "../../store/slices/projectSlice";
 import {
   CircularProgress,
   IconButton,
@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteButton from "./deleteButton";
+import DeleteButton from "../shared/deleteButton";
 
 const ProjectDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,12 +59,12 @@ const ProjectDisplay = () => {
               style={{ cursor: "pointer" }}
             >
               <TableCell className="w-1/6 h-1/2">
-                <img src={project.Logo_Path} />
+                <img src={project.Logo_Path ? project.Logo_Path : ""} />
               </TableCell>
               <TableCell>{project.Name}</TableCell>
               <TableCell>{project.DevDate.toString()}</TableCell>
               <TableCell>{project.Status.Status}</TableCell>
-              <TableCell>{project.Name}</TableCell>
+              <TableCell>{project.Hidden ? "Hidden" : "Shown"}</TableCell>
               <TableCell>
                 <IconButton
                   onClick={(event) => {
@@ -76,7 +76,12 @@ const ProjectDisplay = () => {
                 </IconButton>
               </TableCell>
               <TableCell>
-                <DeleteButton {...project} />
+                <DeleteButton
+                  deleteFunction={() =>
+                    dispatch(deleteProject(project.ProjectID))
+                  }
+                  displayName={`project ${project.Name}`}
+                />
               </TableCell>
             </TableRow>
           ))}
