@@ -15,11 +15,55 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteButton from "../shared/deleteButton";
+import { GrReactjs, GrGolang } from "react-icons/gr";
+import { FaNodeJs, FaJava, FaPhp } from "react-icons/fa";
+import { AiOutlineHtml5 } from "react-icons/ai";
+import { TbBrandNextjs, TbBrandCss3 } from "react-icons/tb";
+import {
+  SiTypescript,
+  SiJavascript,
+  SiNeo4J,
+  SiHiveBlockchain,
+  SiSolidity,
+  SiCsharp,
+} from "react-icons/si";
+import { BsImageFill } from "react-icons/bs";
+
+const iconMappings: Record<
+  string,
+  React.FC<{ className?: string; size?: number }>
+> = {
+  GrReactjs: GrReactjs,
+  TbBrandNextjs: TbBrandNextjs,
+  FaNodeJs: FaNodeJs,
+  FaJava: FaJava,
+  FaPhp: FaPhp,
+  SiTypescript: SiTypescript,
+  TbBrandCss3: TbBrandCss3,
+  SiJavascript: SiJavascript,
+  BsImageFill: BsImageFill,
+  AiOutlineHtml5: AiOutlineHtml5,
+  SiNeo4J: SiNeo4J,
+  SiHiveBlockchain: SiHiveBlockchain,
+  SiSolidity: SiSolidity,
+  SiCsharp: SiCsharp,
+  GrGolang: GrGolang
+};
+
 
 const TagDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tags, loading, error } = useSelector((state: RootState) => state.tag);
 
+const displayTag = (tagName: string) => {
+  const IconComponent = iconMappings[tagName];
+
+  if (!IconComponent) {
+    return <div>Invalid icon name</div>;
+  }
+
+  return <IconComponent size={20} />;
+};
   useEffect(() => {
     dispatch(getTags());
   }, [dispatch]);
@@ -44,7 +88,9 @@ const TagDisplay = () => {
         <TableBody>
           {tags.map((tag) => (
             <TableRow key={tag.TagId} hover style={{ cursor: "pointer" }}>
-              <TableCell className="w-1/6 h-1/2"></TableCell>
+              <TableCell className="w-1/6 h-1/2">
+                {displayTag(tag.TagIcon)}
+              </TableCell>
               <TableCell>{tag.Tag}</TableCell>
               <TableCell>
                 <IconButton
