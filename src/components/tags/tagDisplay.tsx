@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { deleteTag, getTags } from "../../store/slices/tagSlice";
 import {
   CircularProgress,
@@ -15,60 +15,58 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteButton from "../shared/deleteButton";
-import { GrReactjs, GrGolang } from "react-icons/gr";
-import { FaNodeJs, FaJava, FaPhp } from "react-icons/fa";
-import { AiOutlineHtml5 } from "react-icons/ai";
-import { TbBrandNextjs, TbBrandCss3 } from "react-icons/tb";
-import {
-  SiTypescript,
-  SiJavascript,
-  SiNeo4J,
-  SiHiveBlockchain,
-  SiSolidity,
-  SiCsharp,
-} from "react-icons/si";
-import { BsImageFill } from "react-icons/bs";
-
-const iconMappings: Record<
-  string,
-  React.FC<{ className?: string; size?: number }>
-> = {
-  GrReactjs: GrReactjs,
-  TbBrandNextjs: TbBrandNextjs,
-  FaNodeJs: FaNodeJs,
-  FaJava: FaJava,
-  FaPhp: FaPhp,
-  SiTypescript: SiTypescript,
-  TbBrandCss3: TbBrandCss3,
-  SiJavascript: SiJavascript,
-  BsImageFill: BsImageFill,
-  AiOutlineHtml5: AiOutlineHtml5,
-  SiNeo4J: SiNeo4J,
-  SiHiveBlockchain: SiHiveBlockchain,
-  SiSolidity: SiSolidity,
-  SiCsharp: SiCsharp,
-  GrGolang: GrGolang
-};
-
+import { loadIcon } from "./iconMapper";
+import { IconType } from "react-icons/lib";
 
 const TagDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { tags, loading, error } = useSelector((state: RootState) => state.tag);
+  const [availableIcons, setAvailableIcons] = useState<
+    Record<string, IconType>
+  >({});
 
-const displayTag = (tagName: string) => {
-  const IconComponent = iconMappings[tagName];
+  const displayTag = (tagName: string) => {
+    const IconComponent = availableIcons[tagName];
 
-  if (!IconComponent) {
-    return <div>Invalid icon name</div>;
-  }
+    if (!IconComponent) {
+      return <CircularProgress />;
+    }
 
-  return <IconComponent size={20} />;
-};
+    return <IconComponent size={20} />;
+  };
   useEffect(() => {
     dispatch(getTags());
   }, [dispatch]);
 
-  const editTag = (tagId: number) => {
+  useEffect(() => {
+    if (!loading && tags.length > 0) {
+      const loadIcons = async () => {
+        const iconEntries = await Promise.all(
+          tags.map(async (tag) => {
+            try {
+              const selectedIcon = await loadIcon(tag.TagIcon);
+              return [tag.TagIcon, selectedIcon as IconType];
+            } catch (error) {
+              console.error(
+                `Failed to load icon for tag: ${tag.TagIcon}`,
+                error,
+              );
+              return null;
+            }
+          }),
+        );
+
+        const iconObject = Object.fromEntries(
+          iconEntries.filter(Boolean) as [string, IconType][],
+        );
+        setAvailableIcons(iconObject);
+      };
+
+      loadIcons();
+    }
+  }, [tags, loading]);
+
+  const editTag = (tagId: Number) => {
     console.log(tagId);
   };
 
