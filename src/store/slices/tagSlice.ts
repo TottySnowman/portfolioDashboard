@@ -2,11 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { logout } from "./authSlice";
 
-
 export interface Tag {
-  TagId: number
-  Tag: string
-  Icon: string
+  TagId: number;
+  Tag: string;
+  Icon: string;
 }
 
 interface TagState {
@@ -86,10 +85,7 @@ export const deleteTag = createAsyncThunk(
 
 export const createTag = createAsyncThunk(
   "tags/createTag",
-  async (
-    tag: Omit<Tag, "TagId">,
-    { rejectWithValue, getState, dispatch },
-  ) => {
+  async (tag: Omit<Tag, "TagId">, { rejectWithValue, getState, dispatch }) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
@@ -146,9 +142,7 @@ const tagSlice = createSlice({
       })
       .addCase(deleteTag.fulfilled, (state, action) => {
         state.loading = false;
-        state.tags = state.tags.filter(
-          (tag) => tag.TagId !== action.payload,
-        );
+        state.tags = state.tags.filter((tag) => tag.TagId !== action.payload);
       })
       .addCase(deleteTag.rejected, (state, action) => {
         state.loading = false;
@@ -161,7 +155,7 @@ const tagSlice = createSlice({
       .addCase(createTag.fulfilled, (state, action) => {
         state.loading = false;
         console.log(action);
-        //state.projects = state.projects.push(action.payload)
+        state.tags = [...state.tags, action.payload];
       })
       .addCase(createTag.rejected, (state, action) => {
         state.loading = false;
@@ -171,4 +165,3 @@ const tagSlice = createSlice({
 });
 
 export default tagSlice.reducer;
-

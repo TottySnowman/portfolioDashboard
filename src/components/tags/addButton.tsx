@@ -4,11 +4,18 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { createTag, Tag } from "../../store/slices/tagSlice";
 import TagIconDisplay from "./tagIconDisplay";
 import { IconType } from "react-icons/lib";
 import { loadIcon } from "./iconMapper";
+import CustomSnackbar from "../shared/snackbar";
 
 const projectSchema = yup
   .object({
@@ -34,12 +41,22 @@ const AddTagButton = () => {
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success",
+  );
+
   const handleOpenModal = async () => {
     setOpen(true);
   };
-  const [selectedIcon, setSelectedIcon] = useState<
-    Record<string, IconType>
-  >({});
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const [selectedIcon, setSelectedIcon] = useState<Record<string, IconType>>(
+    {},
+  );
 
   const {
     register,
@@ -55,17 +72,31 @@ const AddTagButton = () => {
       Icon: data.iconTag,
       Tag: data.displayName,
     };
-    dispatch(createTag(tag));
+    dispatch(createTag(tag))
+      .unwrap()
+      .then((result) => {
+        setSnackbarMessage(`Successfully created the tag: ${result.Tag}`);
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+      })
+      .catch((error) => {
+        setSnackbarMessage(`Failed to create tag: ${error}`);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      });
+
+    handleClose();
   };
+
   const tagIcon = watch("iconTag");
-  useEffect(() =>{
-    const fetchIcon = async() =>{
+  useEffect(() => {
+    const fetchIcon = async () => {
       let icon = await loadIcon(tagIcon);
-      setSelectedIcon({[tagIcon]: icon as IconType})
-    }
+      setSelectedIcon({ [tagIcon]: icon as IconType });
+    };
 
     fetchIcon();
-  }, [tagIcon])
+  }, [tagIcon]);
 
   return (
     <>
@@ -128,6 +159,13 @@ const AddTagButton = () => {
           </form>
         </Box>
       </Modal>
+
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        onClose={handleSnackbarClose}
+      />
     </>
   );
 };
