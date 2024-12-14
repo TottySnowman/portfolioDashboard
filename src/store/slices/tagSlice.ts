@@ -6,7 +6,7 @@ import { logout } from "./authSlice";
 export interface Tag {
   TagId: number
   Tag: string
-  TagIcon: string
+  Icon: string
 }
 
 interface TagState {

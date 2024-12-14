@@ -17,6 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteButton from "../shared/deleteButton";
 import { loadIcon } from "./iconMapper";
 import { IconType } from "react-icons/lib";
+import TagIconDisplay from "./tagIconDisplay";
 
 const TagDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,15 +26,6 @@ const TagDisplay = () => {
     Record<string, IconType>
   >({});
 
-  const displayTag = (tagName: string) => {
-    const IconComponent = availableIcons[tagName];
-
-    if (!IconComponent) {
-      return <CircularProgress />;
-    }
-
-    return <IconComponent size={20} />;
-  };
   useEffect(() => {
     dispatch(getTags());
   }, [dispatch]);
@@ -44,11 +36,11 @@ const TagDisplay = () => {
         const iconEntries = await Promise.all(
           tags.map(async (tag) => {
             try {
-              const selectedIcon = await loadIcon(tag.TagIcon);
-              return [tag.TagIcon, selectedIcon as IconType];
+              const selectedIcon = await loadIcon(tag.Icon);
+              return [tag.Icon, selectedIcon as IconType];
             } catch (error) {
               console.error(
-                `Failed to load icon for tag: ${tag.TagIcon}`,
+                `Failed to load icon for tag: ${tag.Icon}`,
                 error,
               );
               return null;
@@ -87,7 +79,7 @@ const TagDisplay = () => {
           {tags.map((tag) => (
             <TableRow key={tag.TagId} hover style={{ cursor: "pointer" }}>
               <TableCell className="w-1/6 h-1/2">
-                {displayTag(tag.TagIcon)}
+                {TagIconDisplay(tag.Icon, 20, availableIcons)}
               </TableCell>
               <TableCell>{tag.Tag}</TableCell>
               <TableCell>
