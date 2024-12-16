@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { createProject, Project } from "../../store/slices/projectSlice";
-import { getTags, Tag } from "../../store/slices/tagSlice";
+import { getTags } from "../../store/slices/tagSlice";
 
 const projectSchema = yup
   .object({
@@ -51,7 +51,6 @@ const AddProject = () => {
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const { tags } = useSelector((state: RootState) => state.tag);
 
@@ -63,11 +62,10 @@ const AddProject = () => {
     dispatch(getTags());
   }, [dispatch]);
 
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const handleChange = (event: SelectChangeEvent<number[]>) => {
     const { value } = event.target;
-    // Convert selected TagIds back to full Tag objects
-    const selectedTagObjects = tags.filter((tag) => value.includes(tag.TagId));
-    setSelectedTags(selectedTagObjects);
+    setSelectedTags(value as number[]);
   };
 
   const {
@@ -184,13 +182,13 @@ const AddProject = () => {
             </div>
 
             <div className="flex flex-col">
-              <FormControl >
-                <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+              <FormControl>
+                <InputLabel id="demo-multiple-chip-label">Project Technologies</InputLabel>
                 <Select
                   labelId="demo-multiple-chip-label"
                   id="demo-multiple-chip"
                   multiple
-                  value={selectedTags.map((tag) => tag.TagId)}
+                  value={selectedTags}
                   onChange={handleChange}
                   input={<OutlinedInput id="select-multiple-chip" />}
                   renderValue={(selected) => (
