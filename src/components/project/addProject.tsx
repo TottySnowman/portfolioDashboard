@@ -8,18 +8,23 @@ import {
   Modal,
   OutlinedInput,
   Select,
-  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
 import { AppDispatch, RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { createProject, Project } from "../../store/slices/projectSlice";
 import { getTags } from "../../store/slices/tagSlice";
+
+const tagSchema = yup.object({
+  TagId: yup.number().required("Tag ID is required"),
+  Tag: yup.string().required("Tag name is required"),
+  Icon: yup.string().required("Tag icon is required"),
+});
 
 const projectSchema = yup
   .object({
@@ -27,12 +32,14 @@ const projectSchema = yup
     description: yup.string().required("Description is required"),
     gitHubLink: yup.string().nullable(),
     demoLink: yup.string().nullable(),
+    tags: yup.array(tagSchema).min(1, "At least one tag must be selected"),
     devDate: yup
       .date()
       .required("Dev Date is required")
       .default(() => new Date()),
   })
   .required();
+
 type FormData = yup.InferType<typeof projectSchema>;
 
 const AddProject = () => {
@@ -62,21 +69,17 @@ const AddProject = () => {
     dispatch(getTags());
   }, [dispatch]);
 
-  const [selectedTags, setSelectedTags] = useState<number[]>([]);
-  const handleChange = (event: SelectChangeEvent<number[]>) => {
-    const { value } = event.target;
-    setSelectedTags(value as number[]);
-  };
-
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     watch,
   } = useForm<FormData>({
     resolver: yupResolver(projectSchema),
     defaultValues: {
       devDate: new Date(),
+      tags: [],
     },
   });
   const devDateValue = watch("devDate")
@@ -96,7 +99,9 @@ const AddProject = () => {
         Status: "On going",
         StatusID: 1,
       },
+      Tags: data.tags ? data.tags : [],
     };
+    console.log(project);
     dispatch(createProject(project));
   };
 
@@ -181,35 +186,48 @@ const AddProject = () => {
               <p className="text-red-500">{errors.devDate?.message}</p>
             </div>
 
-            <div className="flex flex-col">
-              <FormControl>
-                <InputLabel id="demo-multiple-chip-label">Project Technologies</InputLabel>
-                <Select
-                  labelId="demo-multiple-chip-label"
-                  id="demo-multiple-chip"
-                  multiple
-                  value={selectedTags}
-                  onChange={handleChange}
-                  input={<OutlinedInput id="select-multiple-chip" />}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                      {(selected as number[]).map((tagId) => {
-                        const tag = tags.find((t) => t.TagId === tagId);
-                        return tag ? (
-                          <Chip key={tag.TagId} label={tag.Tag} />
-                        ) : null;
-                      })}
-                    </Box>
+            <Controller
+              name="tags"
+              control={control}
+              render={({ field }) => (
+                <FormControl error={!!errors.tags} sx={{ width: "100%" }}>
+                  <InputLabel id="tags-label">Tags</InputLabel>
+                  <Select
+                    labelId="tags-label"
+                    id="tags"
+                    multiple
+                    value={(field.value ?? []).map((tag) => tag.TagId)}
+                    onChange={(e) => {
+                      const selectedTagIds = e.target.value as number[];
+                      const selectedTags = tags.filter((tag) =>
+                        selectedTagIds.includes(tag.TagId),
+                      ); 
+                      field.onChange(selectedTags);
+                    }}
+                    input={<OutlinedInput id="select-multiple-chip" />}
+                    renderValue={(selectedTagIds) => (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {selectedTagIds.map((id) => {
+                          const tag = tags.find((t) => t.TagId === id);
+                          return tag ? (
+                            <Chip key={tag.TagId} label={tag.Tag} />
+                          ) : null;
+                        })}
+                      </Box>
+                    )}
+                  >
+                    {tags.map((tag) => (
+                      <MenuItem key={tag.TagId} value={tag.TagId}>
+                        {tag.Tag}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.tags && (
+                    <Typography color="error">{errors.tags.message}</Typography>
                   )}
-                >
-                  {tags.map((tag) => (
-                    <MenuItem key={tag.TagId} value={tag.TagId}>
-                      {tag.Tag}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
+                </FormControl>
+              )}
+            />
 
             <div className="w-full flex gap-2 mt-5 justify-end">
               <Button variant="contained" type="submit">

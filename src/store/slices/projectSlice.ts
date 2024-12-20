@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { logout } from "./authSlice";
+import { Tag } from "./tagSlice";
 
 export interface ProjectStatus {
   StatusID: number;
@@ -17,6 +18,7 @@ export interface Project {
   Logo_Path: string | null;
   DevDate: Date;
   Hidden: boolean;
+  Tags: Tag[]
 }
 
 interface ProjectState {
@@ -170,8 +172,7 @@ const projectSlice = createSlice({
       })
       .addCase(createProject.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action);
-        //state.projects = state.projects.push(action.payload)
+        state.projects = [...state.projects, action.payload];
       })
       .addCase(createProject.rejected, (state, action) => {
         state.loading = false;
