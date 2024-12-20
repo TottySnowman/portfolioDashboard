@@ -1,28 +1,17 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
-import { getProjects } from "../store/slices/projectSlice";
+import AddProject from "../components/project/addProject";
+import ProjectDisplay from "../components/project/projectDisplay";
 
-const Projects = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { projects, loading, error } = useSelector(
-    (state: RootState) => state.project,
-  );
-
-  useEffect(() => {
-    dispatch(getProjects());
-  }, [dispatch]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+const ProjectPage = () => {
   return (
-    <div>
-      <p>Projects</p>
-      {projects.map((project) => (
-        <p>{project.Name}</p>
-      ))}
+    <div className="w-full flex justify-center items-center">
+      <div className="mt-3 container">
+        <div className="w-full flex justify-end mb-3">
+          <AddProject />
+        </div>
+        <ProjectDisplay />
+      </div>
     </div>
   );
 };
 
-export default Projects;
+export default ProjectPage;
