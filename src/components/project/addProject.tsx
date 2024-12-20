@@ -19,6 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { createProject, Project } from "../../store/slices/projectSlice";
 import { getTags } from "../../store/slices/tagSlice";
+import CustomSnackbar from "../shared/snackbar";
 
 const tagSchema = yup.object({
   TagId: yup.number().required("Tag ID is required"),
@@ -58,6 +59,15 @@ const AddProject = () => {
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success",
+  );
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const { tags } = useSelector((state: RootState) => state.tag);
 
@@ -101,8 +111,19 @@ const AddProject = () => {
       },
       Tags: data.tags ? data.tags : [],
     };
-    console.log(project);
-    dispatch(createProject(project));
+    dispatch(createProject(project))
+      .unwrap()
+      .then((result) => {
+        setSnackbarMessage(`Successfully created the project: ${result.Name}`);
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+      })
+      .catch((error) => {
+        setSnackbarMessage(`Failed to create project: ${error}`);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      });
+    handleClose();
   };
 
   return (
@@ -201,7 +222,7 @@ const AddProject = () => {
                       const selectedTagIds = e.target.value as number[];
                       const selectedTags = tags.filter((tag) =>
                         selectedTagIds.includes(tag.TagId),
-                      ); 
+                      );
                       field.onChange(selectedTags);
                     }}
                     input={<OutlinedInput id="select-multiple-chip" />}
@@ -244,6 +265,13 @@ const AddProject = () => {
           </form>
         </Box>
       </Modal>
+
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+        onClose={handleSnackbarClose}
+      />
     </>
   );
 };
