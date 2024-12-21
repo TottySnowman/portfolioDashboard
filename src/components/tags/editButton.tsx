@@ -1,12 +1,13 @@
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store/store";
 import { useState } from "react";
-import { Button } from "@mui/material";
-import { createTag, Tag } from "../../store/slices/tagSlice";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { updateTag, Tag } from "../../store/slices/tagSlice";
 import CustomSnackbar from "../shared/snackbar";
 import TagModifyModal, { TagFormData } from "./modifyModal";
 
-const AddTagButton = () => {
+const EditButton = (existingTag: Tag) => {
   const dispatch: AppDispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const handleClose = () => setOpenModal(false);
@@ -16,7 +17,7 @@ const AddTagButton = () => {
     "success",
   );
 
-  const handleOpenModal = async () => {
+  const handleOpenModal = () => {
     setOpenModal(true);
   };
   const handleSnackbarClose = () => {
@@ -24,19 +25,20 @@ const AddTagButton = () => {
   };
 
   const onSubmit = (data: TagFormData) => {
-    var tag: Omit<Tag, "TagId"> = {
+    var tag: Tag = {
+      TagId: existingTag.TagId,
       Icon: data.iconTag,
       Tag: data.displayName,
     };
-    dispatch(createTag(tag))
+    dispatch(updateTag(tag))
       .unwrap()
       .then((result) => {
-        setSnackbarMessage(`Successfully created the tag: ${result.Tag}`);
+        setSnackbarMessage(`Successfully updated the tag: ${result.Tag}`);
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
       })
       .catch((error) => {
-        setSnackbarMessage(`Failed to create tag: ${error}`);
+        setSnackbarMessage(`Failed to update tag: ${error}`);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       });
@@ -46,14 +48,14 @@ const AddTagButton = () => {
 
   return (
     <>
-      <Button variant="contained" onClick={handleOpenModal}>
-        Add Tag
-      </Button>
+      <IconButton onClick={handleOpenModal}>
+        <EditIcon />
+      </IconButton>
 
       <TagModifyModal
         modalOpen={openModal}
         handleCloseModal={handleClose}
-        existingTag={null}
+        existingTag={existingTag}
         onSubmit={onSubmit}
       />
 
@@ -67,4 +69,4 @@ const AddTagButton = () => {
   );
 };
 
-export default AddTagButton;
+export default EditButton;
