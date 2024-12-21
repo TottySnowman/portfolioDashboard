@@ -8,10 +8,18 @@ import Projects from "./pages/projects.tsx";
 import SignInPage from "./pages/signIn.tsx";
 import ProtectedRoute from "./pages/protectedRoute.tsx";
 import Tags from "./pages/tags.tsx";
-
+import { createTheme, ThemeProvider } from "@mui/material";
+import CssBaseline from '@mui/material/CssBaseline';
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
       <BrowserRouter>
         <Routes>
           <Route path="/signIn" element={<SignInPage />} />
@@ -41,6 +49,7 @@ createRoot(document.getElementById("root")!).render(
           />
         </Routes>
       </BrowserRouter>
+     </ThemeProvider>
     </Provider>
   </StrictMode>,
 );
