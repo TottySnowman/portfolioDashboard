@@ -116,6 +116,39 @@ export const createTag = createAsyncThunk(
   },
 );
 
+export const updateTag = createAsyncThunk(
+  "tags/updateTag",
+  async (tag: Tag, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const authState = (getState() as RootState).auth;
+      const token = authState.token;
+      const response = await fetch("http://localhost:6001/tag", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(tag),
+      });
+
+      if (response.status === 401) {
+        dispatch(logout());
+        return;
+      }
+
+      if (!response.ok) {
+        const error = await response.text();
+        return rejectWithValue(error);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const tagSlice = createSlice({
   name: "tags",
   initialState,
@@ -145,6 +178,21 @@ const tagSlice = createSlice({
         state.tags = state.tags.filter((tag) => tag.TagId !== action.payload);
       })
       .addCase(deleteTag.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateTag.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateTag.fulfilled, (state, action) => {
+        state.loading = false;
+        let tagWithout = state.tags.filter(
+          (tag) => tag.TagId !== action.payload.TagId,
+        );
+        state.tags = [...tagWithout, action.payload];
+      })
+      .addCase(updateTag.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

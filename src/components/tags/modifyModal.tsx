@@ -36,6 +36,10 @@ const TagModifyModal = (modalImport: tagModalImport) => {
     formState: { errors },
   } = useForm<TagFormData>({
     resolver: yupResolver(tagSchema),
+    defaultValues:{
+      iconTag: modalImport.existingTag?.Icon,
+      displayName: modalImport.existingTag?.Tag
+    }
   });
 
   const tagIcon = watch("iconTag");
