@@ -19,7 +19,7 @@ interface singlePage {
 const pages: singlePage[] = [
   {
     displayName: "Projects",
-    url: "/projects",
+    url: "/",
   },
   {
     displayName: "Tags",
