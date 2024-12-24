@@ -20,6 +20,7 @@ import * as yup from "yup";
 import { createProject, Project } from "../../store/slices/projectSlice";
 import { getTags } from "../../store/slices/tagSlice";
 import CustomSnackbar from "../shared/snackbar";
+import { ModalStyle } from "../shared/modalStyle";
 
 const tagSchema = yup.object({
   TagId: yup.number().required("Tag ID is required"),
@@ -36,26 +37,13 @@ const projectSchema = yup
     tags: yup.array(tagSchema).min(1, "At least one tag must be selected"),
     devDate: yup
       .date()
-      .required("Dev Date is required")
-      .default(() => new Date()),
+      .required("Dev Date is required"),
   })
   .required();
 
 type FormData = yup.InferType<typeof projectSchema>;
 
 const AddProject = () => {
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 600,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
-
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -138,7 +126,7 @@ const AddProject = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={ModalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Create Project
           </Typography>
