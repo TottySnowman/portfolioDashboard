@@ -35,7 +35,7 @@ const AddProject = () => {
       About: data.description,
       Github_Link: data.gitHubLink ? data.gitHubLink : null,
       Demo_Link: data.demoLink ? data.demoLink : null,
-      DevDate: data.devDate,
+      DevDate: new Date(data.devDate),
       Logo_Path: null,
       Hidden: false,
       Status: {

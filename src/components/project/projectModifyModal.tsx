@@ -34,7 +34,7 @@ const ProjectFormSchema = yup
     gitHubLink: yup.string().nullable(),
     demoLink: yup.string().nullable(),
     tags: yup.array(tagSchema).min(1, "At least one tag must be selected"),
-    devDate: yup.date().required("Dev Date is required"),
+    devDate: yup.string().required("Dev Date is required"),
   })
   .required();
 
@@ -60,18 +60,13 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
     handleSubmit,
     control,
     formState: { errors },
-    watch,
   } = useForm<projectFormData>({
     resolver: yupResolver(ProjectFormSchema),
     defaultValues: {
-      devDate: new Date(),
+      devDate: new Date().toISOString().split("T")[0],
       tags: [],
     },
   });
-  const devDateValue = watch("devDate")
-    ? new Date(watch("devDate")).toISOString().split("T")[0]
-    : "";
-
   return (
     <>
       <Modal
@@ -143,7 +138,6 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
                 variant="outlined"
                 type="date"
                 error={errors.devDate?.message != null}
-                defaultValue={devDateValue}
                 {...register("devDate")}
               />
               <p className="text-red-500">{errors.devDate?.message}</p>
