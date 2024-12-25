@@ -4,7 +4,6 @@ import { AppDispatch, RootState } from "../../store/store";
 import { deleteProject, getProjects } from "../../store/slices/projectSlice";
 import {
   CircularProgress,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -13,8 +12,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteButton from "../shared/deleteButton";
+import EditProject from "./editButton";
 
 const ProjectDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,14 +24,6 @@ const ProjectDisplay = () => {
   useEffect(() => {
     dispatch(getProjects());
   }, [dispatch]);
-
-  const displayProject = (projectID: number) => {
-    console.log(projectID);
-  };
-
-  const editProject = (projectID: number) => {
-    console.log(projectID);
-  };
 
   if (loading) return <CircularProgress />;
   if (error) return <p>Error: {error}</p>;
@@ -55,25 +46,17 @@ const ProjectDisplay = () => {
             <TableRow
               key={project.ProjectID}
               hover
-              onClick={() => displayProject(project.ProjectID)}
               style={{ cursor: "pointer" }}
             >
               <TableCell className="w-1/6 h-1/2">
                 <img src={project.Logo_Path ? project.Logo_Path : ""} />
               </TableCell>
               <TableCell>{project.Name}</TableCell>
-              <TableCell>{project.DevDate.toString()}</TableCell>
+              <TableCell>{project.DevDate.toString().split("T")[0]}</TableCell>
               <TableCell>{project.Status.Status}</TableCell>
               <TableCell>{project.Hidden ? "Hidden" : "Shown"}</TableCell>
               <TableCell>
-                <IconButton
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    editProject(project.ProjectID);
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
+                <EditProject existingProject={project} />
               </TableCell>
               <TableCell>
                 <DeleteButton

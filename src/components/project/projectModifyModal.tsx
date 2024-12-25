@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
+  Checkbox,
   Chip,
   FormControl,
   FormHelperText,
@@ -43,6 +44,7 @@ const ProjectFormSchema = yup
     tags: yup.array(tagSchema).min(1, "At least one tag must be selected"),
     devDate: yup.string().required("Dev Date is required"),
     status: statusSchema.required("Status is required"),
+    hidden: yup.boolean().default(false),
   })
   .required();
 
@@ -73,14 +75,30 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
   } = useForm<projectFormData>({
     resolver: yupResolver(ProjectFormSchema),
     defaultValues: {
-      devDate: new Date().toISOString().split("T")[0],
-      tags: [],
-      status:{
-        Status: "On going",
-        StatusID: 1
-      }
+      devDate: projectImport.existingProject
+        ? new Date(projectImport.existingProject.DevDate)
+            .toISOString()
+            .split("T")[0]
+        : new Date().toISOString().split("T")[0],
+      tags: projectImport.existingProject
+        ? projectImport.existingProject.Tags
+        : [],
+      status: projectImport.existingProject
+        ? projectImport.existingProject.Status
+        : {
+            StatusID: 1,
+            Status: "On going",
+          },
+      title: projectImport.existingProject?.Name,
+      description: projectImport.existingProject?.About,
+      gitHubLink: projectImport.existingProject?.Github_Link,
+      demoLink: projectImport.existingProject?.Demo_Link,
+      hidden: projectImport.existingProject
+        ? projectImport.existingProject.Hidden
+        : false,
     },
   });
+
   return (
     <>
       <Modal
@@ -199,25 +217,36 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
                 </FormControl>
               )}
             />
-            <div className="flex flex-col">
-              <FormControl fullWidth>
-                <InputLabel id="status-label">Status</InputLabel>
-                <Select
-                  labelId="status-label"
-                  id="status"
-                  {...register("status.StatusID", { required: true })} // Register StatusID
-                  error={errors?.status?.StatusID != null}
-                >
-                  {status.map((status) => (
-                    <MenuItem key={status.StatusID} value={status.StatusID}>
-                      {status.Status}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error={!!errors?.status?.StatusID}>
-                  {errors?.status?.StatusID?.message}
-                </FormHelperText>
-              </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel id="status-label">Status</InputLabel>
+              <Select
+                labelId="status-label"
+                id="status"
+                {...register("status.StatusID", { required: true })}
+                defaultValue={
+                  projectImport.existingProject?.Status.StatusID || 1
+                }
+                error={errors?.status?.StatusID != null}
+              >
+                {status.map((statusItem) => (
+                  <MenuItem
+                    key={statusItem.StatusID}
+                    value={statusItem.StatusID}
+                  >
+                    {statusItem.Status}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText error={!!errors?.status?.StatusID}>
+                {errors?.status?.StatusID?.message}
+              </FormHelperText>
+            </FormControl>
+
+            <div className="flex flex-row">
+              <p>Hidden</p>
+              <Checkbox id="outlined-basic" {...register("hidden")} />
+              <p className="text-red-500">{errors.hidden?.message}</p>
             </div>
 
             <div className="w-full flex gap-2 mt-5 justify-end">

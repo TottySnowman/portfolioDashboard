@@ -37,7 +37,7 @@ const AddProject = () => {
       Demo_Link: data.demoLink ? data.demoLink : null,
       DevDate: new Date(data.devDate),
       Logo_Path: null,
-      Hidden: false,
+      Hidden: data.hidden,
       Status: {
         Status: data.status.Status,
         StatusID: data.status.StatusID,
