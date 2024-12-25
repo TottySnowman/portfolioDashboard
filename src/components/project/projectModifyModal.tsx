@@ -243,9 +243,19 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
               </FormHelperText>
             </FormControl>
 
-            <div className="flex flex-row">
+            <div className="flex flex-row items-center">
               <p>Hidden</p>
-              <Checkbox id="outlined-basic" {...register("hidden")} />
+              <Controller
+                name="hidden"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    id="outlined-basic"
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                )}
+              />
               <p className="text-red-500">{errors.hidden?.message}</p>
             </div>
 
