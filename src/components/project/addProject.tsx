@@ -39,8 +39,8 @@ const AddProject = () => {
       Logo_Path: null,
       Hidden: false,
       Status: {
-        Status: "On going",
-        StatusID: 1,
+        Status: data.status.Status,
+        StatusID: data.status.StatusID,
       },
       Tags: data.tags ? data.tags : [],
     };

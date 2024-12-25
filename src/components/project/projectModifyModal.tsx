@@ -11,6 +11,7 @@ import {
   Button,
   Chip,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Modal,
@@ -20,11 +21,17 @@ import {
   Typography,
 } from "@mui/material";
 import { ModalStyle } from "../shared/modalStyle";
+import { getStatus } from "../../store/slices/statusSlice";
 
 const tagSchema = yup.object({
   TagId: yup.number().required("Tag ID is required"),
   Tag: yup.string().required("Tag name is required"),
   Icon: yup.string().required("Tag icon is required"),
+});
+
+const statusSchema = yup.object({
+  StatusID: yup.number().required("Status Id is required"),
+  Status: yup.string().required("Status is required"),
 });
 
 const ProjectFormSchema = yup
@@ -35,6 +42,7 @@ const ProjectFormSchema = yup
     demoLink: yup.string().nullable(),
     tags: yup.array(tagSchema).min(1, "At least one tag must be selected"),
     devDate: yup.string().required("Dev Date is required"),
+    status: statusSchema.required("Status is required"),
   })
   .required();
 
@@ -50,9 +58,11 @@ interface projectModalImport {
 const ModifyProjectModal = (projectImport: projectModalImport) => {
   const dispatch: AppDispatch = useDispatch();
   const { tags } = useSelector((state: RootState) => state.tag);
+  const { status } = useSelector((state: RootState) => state.status);
 
   useEffect(() => {
     dispatch(getTags());
+    dispatch(getStatus());
   }, [dispatch]);
 
   const {
@@ -65,6 +75,10 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
     defaultValues: {
       devDate: new Date().toISOString().split("T")[0],
       tags: [],
+      status:{
+        Status: "On going",
+        StatusID: 1
+      }
     },
   });
   return (
@@ -185,6 +199,26 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
                 </FormControl>
               )}
             />
+            <div className="flex flex-col">
+              <FormControl fullWidth>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
+                  id="status"
+                  {...register("status.StatusID", { required: true })} // Register StatusID
+                  error={errors?.status?.StatusID != null}
+                >
+                  {status.map((status) => (
+                    <MenuItem key={status.StatusID} value={status.StatusID}>
+                      {status.Status}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText error={!!errors?.status?.StatusID}>
+                  {errors?.status?.StatusID?.message}
+                </FormHelperText>
+              </FormControl>
+            </div>
 
             <div className="w-full flex gap-2 mt-5 justify-end">
               <Button variant="contained" type="submit">
