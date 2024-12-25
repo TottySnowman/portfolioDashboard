@@ -18,7 +18,7 @@ export interface Project {
   Logo_Path: string | null;
   DevDate: Date;
   Hidden: boolean;
-  Tags: Tag[]
+  Tags: Tag[];
 }
 
 interface ProjectState {
@@ -134,10 +134,7 @@ export const createProject = createAsyncThunk(
 
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
-  async (
-    project: Project,
-    { rejectWithValue, getState, dispatch },
-  ) => {
+  async (project: Project, { rejectWithValue, getState, dispatch }) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
@@ -220,14 +217,16 @@ const projectSlice = createSlice({
       })
       .addCase(updateProject.fulfilled, (state, action) => {
         state.loading = false;
-        state.projects = [...state.projects, action.payload];
+        let tempProjects = state.projects.filter(
+          (project) => project.ProjectID !== action.payload,
+        );
+
+        state.projects = [...tempProjects, action.payload];
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
-    ;
-
   },
 });
 
