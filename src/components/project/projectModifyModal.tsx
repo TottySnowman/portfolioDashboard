@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { ModalStyle } from "../shared/modalStyle";
 import { getStatus } from "../../store/slices/statusSlice";
+import FileUploader from "../shared/fileUploader";
 
 const tagSchema = yup.object({
   TagId: yup.number().required("Tag ID is required"),
@@ -56,6 +57,10 @@ interface projectModalImport {
   existingProject: Project | null;
   onSubmit: (data: projectFormData) => void;
 }
+
+const ayo = (file: File) => {
+  console.log(file.type);
+};
 
 const ModifyProjectModal = (projectImport: projectModalImport) => {
   const dispatch: AppDispatch = useDispatch();
@@ -258,6 +263,11 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
               />
               <p className="text-red-500">{errors.hidden?.message}</p>
             </div>
+
+            <FileUploader
+              submitFunction={(file) => ayo(file)}
+              allowedFileTypes={["application/pdf"]}
+            />
 
             <div className="w-full flex gap-2 mt-5 justify-end">
               <Button variant="contained" type="submit">
