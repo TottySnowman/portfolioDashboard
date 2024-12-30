@@ -58,6 +58,7 @@ const FileUploader = (props: fileUploadImport) => {
       >
         Upload files
         <VisuallyHiddenInput
+          accept={props.allowedFileTypes.join(',')}
           type="file"
           onChange={(event) => setTheFile(event)}
         />

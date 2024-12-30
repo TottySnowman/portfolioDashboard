@@ -70,6 +70,9 @@ const AddProject = () => {
         handleCloseModal={handleClose}
         existingProject={null}
         onSubmit={onSubmit}
+        setSnackbarMessage={setSnackbarMessage}
+        setSnackbarSeverity={setSnackbarSeverity}
+        setSnackbarOpen={setSnackbarOpen}
       />
 
       <CustomSnackbar
