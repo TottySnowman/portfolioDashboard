@@ -1,21 +1,32 @@
 import { Button } from "@mui/material";
-import { AppDispatch } from "../../store/store";
-import { useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { createProject, Project } from "../../store/slices/projectSlice";
 import { getTags } from "../../store/slices/tagSlice";
 import CustomSnackbar from "../shared/snackbar";
 import ModifyProjectModal, { projectFormData } from "./projectModifyModal";
+import { DeleteLogo } from "../../store/slices/logoSlice";
 
 const AddProject = () => {
   const dispatch: AppDispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const handleClose = () => setOpen(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success",
   );
+
+  const { filePath } = useSelector((state: RootState) => state.logo);
+
+  const handleCloseAndDeleteLogo = () => {
+    if (filePath != null) {
+      const formData = new FormData();
+      formData.append("filePath", filePath);
+      dispatch(DeleteLogo(formData));
+    }
+    setOpen(false);
+  };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -36,7 +47,7 @@ const AddProject = () => {
       Github_Link: data.gitHubLink ? data.gitHubLink : null,
       Demo_Link: data.demoLink ? data.demoLink : null,
       DevDate: new Date(data.devDate),
-      Logo_Path: null,
+      Logo_Path: data.logoPath,
       Hidden: data.hidden,
       Status: {
         Status: data.status.Status,
@@ -56,7 +67,7 @@ const AddProject = () => {
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       });
-    handleClose();
+    setOpen(false);
   };
 
   return (
@@ -67,7 +78,7 @@ const AddProject = () => {
 
       <ModifyProjectModal
         modalOpen={open}
-        handleCloseModal={handleClose}
+        handleCloseModal={handleCloseAndDeleteLogo}
         existingProject={null}
         onSubmit={onSubmit}
         setSnackbarMessage={setSnackbarMessage}

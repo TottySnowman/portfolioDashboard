@@ -47,6 +47,7 @@ const ProjectFormSchema = yup
     devDate: yup.string().required("Dev Date is required"),
     status: statusSchema.required("Status is required"),
     hidden: yup.boolean().default(false),
+    logoPath: yup.string().required("Logo is required"),
   })
   .required();
 
@@ -74,28 +75,11 @@ const ModifyProjectModal = (props: projectModalImport) => {
     dispatch(getStatus());
   }, [dispatch]);
 
-  const handleLogoUpload = (file: File) => {
-    const fileForm = new FormData();
-    fileForm.append("file", file);
-    dispatch(PostLogo(fileForm))
-      .unwrap()
-      .then((_) => {
-        props.setSnackbarMessage(`Successfully uploaded the logo`);
-        props.setSnackbarSeverity("success");
-        props.setSnackbarOpen(true);
-      })
-      .catch((error) => {
-        const nError = error as ErrorModel;
-        props.setSnackbarMessage(`Failed to upload logo: ${nError.errors}`);
-        props.setSnackbarSeverity("error");
-        props.setSnackbarOpen(true);
-      });
-  };
-
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<projectFormData>({
     resolver: yupResolver(ProjectFormSchema),
@@ -115,8 +99,35 @@ const ModifyProjectModal = (props: projectModalImport) => {
       gitHubLink: props.existingProject?.Github_Link,
       demoLink: props.existingProject?.Demo_Link,
       hidden: props.existingProject ? props.existingProject.Hidden : false,
+      logoPath: props.existingProject?.Logo_Path
     },
   });
+
+  const { filePath } = useSelector((state: RootState) => state.logo);
+  const handleLogoUpload = (file: File) => {
+    const fileForm = new FormData();
+    fileForm.append("file", file);
+    dispatch(PostLogo(fileForm))
+      .unwrap()
+      .then((_) => {
+        props.setSnackbarMessage(`Successfully uploaded the logo`);
+        props.setSnackbarSeverity("success");
+        props.setSnackbarOpen(true);
+      })
+      .catch((error) => {
+        const nError = error as ErrorModel;
+        props.setSnackbarMessage(`Failed to upload logo: ${nError.errors}`);
+        props.setSnackbarSeverity("error");
+        props.setSnackbarOpen(true);
+      });
+  };
+
+  useEffect(() =>{
+    if(filePath != null){
+        setValue("logoPath", filePath);
+    }
+  }, [filePath])
+
 
   return (
     <>
@@ -285,6 +296,18 @@ const ModifyProjectModal = (props: projectModalImport) => {
                 "image/jpeg",
               ]}
             />
+
+            <div className="flex flex-col">
+              <TextField
+                id="outlined-basic"
+                label="Logo path"
+                variant="outlined"
+                {...register("logoPath")}
+                disabled={true}
+                error={errors.logoPath?.message != null}
+              />
+              <p className="text-red-500">{errors.logoPath?.message}</p>
+            </div>
 
             <div className="w-full flex gap-2 mt-5 justify-end">
               <Button variant="contained" type="submit">
