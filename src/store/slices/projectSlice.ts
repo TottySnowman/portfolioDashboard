@@ -15,7 +15,7 @@ export interface Project {
   Demo_Link: string | null;
   Github_Link: string | null;
   Status: ProjectStatus;
-  Logo_Path: string | null;
+  Logo_Path: string;
   DevDate: Date;
   Hidden: boolean;
   Tags: Tag[];

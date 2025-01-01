@@ -75,6 +75,9 @@ const EditProject = (importParams: importParams) => {
         handleCloseModal={handleClose}
         existingProject={importParams.existingProject}
         onSubmit={onSubmit}
+        setSnackbarMessage={setSnackbarMessage}
+        setSnackbarSeverity={setSnackbarSeverity}
+        setSnackbarOpen={setSnackbarOpen}
       />
 
       <CustomSnackbar

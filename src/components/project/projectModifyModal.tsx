@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Project } from "../../store/slices/projectSlice";
-import { AppDispatch, RootState } from "../../store/store";
+import { AppDispatch, ErrorModel, RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getTags } from "../../store/slices/tagSlice";
@@ -23,6 +23,8 @@ import {
 } from "@mui/material";
 import { ModalStyle } from "../shared/modalStyle";
 import { getStatus } from "../../store/slices/statusSlice";
+import FileUploader from "../shared/fileUploader";
+import { PostLogo } from "../../store/slices/logoSlice";
 
 const tagSchema = yup.object({
   TagId: yup.number().required("Tag ID is required"),
@@ -45,6 +47,7 @@ const ProjectFormSchema = yup
     devDate: yup.string().required("Dev Date is required"),
     status: statusSchema.required("Status is required"),
     hidden: yup.boolean().default(false),
+    logoPath: yup.string().required("Logo is required"),
   })
   .required();
 
@@ -55,12 +58,18 @@ interface projectModalImport {
   handleCloseModal: () => void;
   existingProject: Project | null;
   onSubmit: (data: projectFormData) => void;
+  setSnackbarMessage: (value: React.SetStateAction<string>) => void;
+  setSnackbarSeverity: (
+    value: React.SetStateAction<"success" | "error">,
+  ) => void;
+  setSnackbarOpen: (value: React.SetStateAction<boolean>) => void;
 }
 
-const ModifyProjectModal = (projectImport: projectModalImport) => {
+const ModifyProjectModal = (props: projectModalImport) => {
   const dispatch: AppDispatch = useDispatch();
   const { tags } = useSelector((state: RootState) => state.tag);
   const { status } = useSelector((state: RootState) => state.status);
+  const { filePath } = useSelector((state: RootState) => state.logo);
 
   useEffect(() => {
     dispatch(getTags());
@@ -71,48 +80,75 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<projectFormData>({
     resolver: yupResolver(ProjectFormSchema),
     defaultValues: {
-      devDate: projectImport.existingProject
-        ? new Date(projectImport.existingProject.DevDate)
-            .toISOString()
-            .split("T")[0]
+      devDate: props.existingProject
+        ? new Date(props.existingProject.DevDate).toISOString().split("T")[0]
         : new Date().toISOString().split("T")[0],
-      tags: projectImport.existingProject
-        ? projectImport.existingProject.Tags
-        : [],
-      status: projectImport.existingProject
-        ? projectImport.existingProject.Status
+      tags: props.existingProject ? props.existingProject.Tags : [],
+      status: props.existingProject
+        ? props.existingProject.Status
         : {
             StatusID: 1,
             Status: "On going",
           },
-      title: projectImport.existingProject?.Name,
-      description: projectImport.existingProject?.About,
-      gitHubLink: projectImport.existingProject?.Github_Link,
-      demoLink: projectImport.existingProject?.Demo_Link,
-      hidden: projectImport.existingProject
-        ? projectImport.existingProject.Hidden
-        : false,
+      title: props.existingProject?.Name,
+      description: props.existingProject?.About,
+      gitHubLink: props.existingProject?.Github_Link,
+      demoLink: props.existingProject?.Demo_Link,
+      hidden: props.existingProject ? props.existingProject.Hidden : false,
+      logoPath: props.existingProject?.Logo_Path,
     },
   });
+
+  const handleLogoUpload = (file: File) => {
+    const fileForm = new FormData();
+    fileForm.append("file", file);
+    dispatch(PostLogo(fileForm))
+      .unwrap()
+      .then((_) => {
+        props.setSnackbarMessage(`Successfully uploaded the logo`);
+        props.setSnackbarSeverity("success");
+        props.setSnackbarOpen(true);
+      })
+      .catch((error) => {
+        const nError = error as ErrorModel;
+        props.setSnackbarMessage(`Failed to upload logo: ${nError.errors}`);
+        props.setSnackbarSeverity("error");
+        props.setSnackbarOpen(true);
+      });
+  };
+
+  useEffect(() => {
+    if (props.existingProject != null){
+      setValue("logoPath", props.existingProject.Logo_Path);
+      return
+    }
+
+    if (filePath != null) {
+      setValue("logoPath", filePath);
+    }else{
+      setValue("logoPath", "");
+    }
+  }, [filePath]);
 
   return (
     <>
       <Modal
-        open={projectImport.modalOpen}
-        onClose={projectImport.handleCloseModal}
+        open={props.modalOpen}
+        onClose={props.handleCloseModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={ModalStyle}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            {projectImport.existingProject ? "Edit Project" : "Create Project"}
+            {props.existingProject ? "Edit Project" : "Create Project"}
           </Typography>
           <form
-            onSubmit={handleSubmit(projectImport.onSubmit)}
+            onSubmit={handleSubmit(props.onSubmit)}
             className="w-full flex flex-col gap-2 mt-3"
           >
             <div className="flex flex-col">
@@ -224,9 +260,7 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
                 labelId="status-label"
                 id="status"
                 {...register("status.StatusID", { required: true })}
-                defaultValue={
-                  projectImport.existingProject?.Status.StatusID || 1
-                }
+                defaultValue={props.existingProject?.Status.StatusID || 1}
                 error={errors?.status?.StatusID != null}
               >
                 {status.map((statusItem) => (
@@ -259,14 +293,38 @@ const ModifyProjectModal = (projectImport: projectModalImport) => {
               <p className="text-red-500">{errors.hidden?.message}</p>
             </div>
 
+            {!props.existingProject && (
+              <FileUploader
+                submitFunction={(file) => handleLogoUpload(file)}
+                allowedFileTypes={[
+                  "image/png",
+                  "image/webp",
+                  "image/svg+xml",
+                  "image/jpeg",
+                ]}
+              />
+            )}
+
+            <div className="flex flex-col">
+              <TextField
+                id="outlined-basic"
+                label="Logo path"
+                variant="outlined"
+                {...register("logoPath")}
+                disabled={true}
+                error={errors.logoPath?.message != null}
+              />
+              <p className="text-red-500">{errors.logoPath?.message}</p>
+            </div>
+
             <div className="w-full flex gap-2 mt-5 justify-end">
               <Button variant="contained" type="submit">
-                {projectImport.existingProject ? "Edit" : "Create"}
+                {props.existingProject ? "Edit" : "Create"}
               </Button>
               <Button
                 color="error"
                 variant="contained"
-                onClick={() => projectImport.handleCloseModal()}
+                onClick={() => props.handleCloseModal()}
               >
                 Close
               </Button>
