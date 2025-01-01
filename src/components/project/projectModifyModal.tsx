@@ -99,7 +99,7 @@ const ModifyProjectModal = (props: projectModalImport) => {
       gitHubLink: props.existingProject?.Github_Link,
       demoLink: props.existingProject?.Demo_Link,
       hidden: props.existingProject ? props.existingProject.Hidden : false,
-      logoPath: props.existingProject?.Logo_Path
+      logoPath: props.existingProject?.Logo_Path,
     },
   });
 
@@ -122,12 +122,11 @@ const ModifyProjectModal = (props: projectModalImport) => {
       });
   };
 
-  useEffect(() =>{
-    if(filePath != null){
-        setValue("logoPath", filePath);
+  useEffect(() => {
+    if (filePath != null) {
+      setValue("logoPath", filePath);
     }
-  }, [filePath])
-
+  }, [filePath]);
 
   return (
     <>
@@ -287,15 +286,17 @@ const ModifyProjectModal = (props: projectModalImport) => {
               <p className="text-red-500">{errors.hidden?.message}</p>
             </div>
 
-            <FileUploader
-              submitFunction={(file) => handleLogoUpload(file)}
-              allowedFileTypes={[
-                "image/png",
-                "image/webp",
-                "image/svg+xml",
-                "image/jpeg",
-              ]}
-            />
+            {!props.existingProject && (
+              <FileUploader
+                submitFunction={(file) => handleLogoUpload(file)}
+                allowedFileTypes={[
+                  "image/png",
+                  "image/webp",
+                  "image/svg+xml",
+                  "image/jpeg",
+                ]}
+              />
+            )}
 
             <div className="flex flex-col">
               <TextField
