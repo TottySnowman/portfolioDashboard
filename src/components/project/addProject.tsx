@@ -6,7 +6,7 @@ import { createProject, Project } from "../../store/slices/projectSlice";
 import { getTags } from "../../store/slices/tagSlice";
 import CustomSnackbar from "../shared/snackbar";
 import ModifyProjectModal, { projectFormData } from "./projectModifyModal";
-import { DeleteLogo } from "../../store/slices/logoSlice";
+import { DeleteLogo, resetFilePath } from "../../store/slices/logoSlice";
 
 const AddProject = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -68,6 +68,7 @@ const AddProject = () => {
         setSnackbarOpen(true);
       });
     setOpen(false);
+    dispatch(resetFilePath());
   };
 
   return (

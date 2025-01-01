@@ -69,6 +69,7 @@ const ModifyProjectModal = (props: projectModalImport) => {
   const dispatch: AppDispatch = useDispatch();
   const { tags } = useSelector((state: RootState) => state.tag);
   const { status } = useSelector((state: RootState) => state.status);
+  const { filePath } = useSelector((state: RootState) => state.logo);
 
   useEffect(() => {
     dispatch(getTags());
@@ -103,7 +104,6 @@ const ModifyProjectModal = (props: projectModalImport) => {
     },
   });
 
-  const { filePath } = useSelector((state: RootState) => state.logo);
   const handleLogoUpload = (file: File) => {
     const fileForm = new FormData();
     fileForm.append("file", file);
@@ -123,8 +123,15 @@ const ModifyProjectModal = (props: projectModalImport) => {
   };
 
   useEffect(() => {
+    if (props.existingProject != null){
+      setValue("logoPath", props.existingProject.Logo_Path);
+      return
+    }
+
     if (filePath != null) {
       setValue("logoPath", filePath);
+    }else{
+      setValue("logoPath", "");
     }
   }, [filePath]);
 

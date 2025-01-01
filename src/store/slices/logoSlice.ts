@@ -84,7 +84,9 @@ const logoSlice = createSlice({
   name: "logo",
   initialState,
   reducers: {
-    // Action to save the token in the state
+    resetFilePath: (state) => {
+      state.filePath = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -115,4 +117,5 @@ const logoSlice = createSlice({
   },
 });
 
+export const { resetFilePath } = logoSlice.actions;
 export default logoSlice.reducer;
