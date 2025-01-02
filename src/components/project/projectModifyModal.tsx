@@ -302,6 +302,7 @@ const ModifyProjectModal = (props: projectModalImport) => {
                   "image/svg+xml",
                   "image/jpeg",
                 ]}
+                customButtonMessage={null}
               />
             )}
 

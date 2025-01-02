@@ -4,6 +4,7 @@ import projectReducer from "./slices/projectSlice";
 import tagReducer from "./slices/tagSlice";
 import statusReducer from "./slices/statusSlice";
 import logoReducer from "./slices/logoSlice";
+import cvReducer from "./slices/cvSlice";
 export interface ErrorModel {
   errors: string;
 }
@@ -15,6 +16,7 @@ const store = configureStore({
     tag: tagReducer,
     status: statusReducer,
     logo: logoReducer,
+    cv: cvReducer,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

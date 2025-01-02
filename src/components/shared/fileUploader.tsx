@@ -17,6 +17,7 @@ const VisuallyHiddenInput = styled("input")({
 interface fileUploadImport {
   submitFunction: (file: File) => void;
   allowedFileTypes: string[];
+  customButtonMessage: string | null;
 }
 
 const FileUploader = (props: fileUploadImport) => {
@@ -56,7 +57,7 @@ const FileUploader = (props: fileUploadImport) => {
         tabIndex={-1}
         startIcon={<CloudUploadIcon />}
       >
-        Upload files
+        {props.customButtonMessage ? props.customButtonMessage : "Upload File"}
         <VisuallyHiddenInput
           accept={props.allowedFileTypes.join(',')}
           type="file"
