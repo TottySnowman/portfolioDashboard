@@ -10,6 +10,7 @@ import ProtectedRoute from "./pages/protectedRoute.tsx";
 import Tags from "./pages/tags.tsx";
 import { createTheme, ThemeProvider } from "@mui/material";
 import CssBaseline from '@mui/material/CssBaseline';
+import CvPage from "./pages/cv.tsx";
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -43,7 +44,7 @@ createRoot(document.getElementById("root")!).render(
             path="/cv"
             element={
               <ProtectedRoute>
-                <Projects />
+                <CvPage />
               </ProtectedRoute>
             }
           />

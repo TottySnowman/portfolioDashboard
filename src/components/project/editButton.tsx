@@ -41,7 +41,7 @@ const EditProject = (importParams: importParams) => {
       Github_Link: data.gitHubLink ? data.gitHubLink : null,
       Demo_Link: data.demoLink ? data.demoLink : null,
       DevDate: new Date(data.devDate),
-      Logo_Path: null,
+      Logo_Path: data.logoPath,
       Hidden: data.hidden,
       Status: {
         Status: data.status.Status,
