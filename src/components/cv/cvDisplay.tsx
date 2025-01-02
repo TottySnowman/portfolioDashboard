@@ -22,6 +22,7 @@ const CvDisplay = () => {
         setPdfLink(null);
       });
   }, [selectedLanguage]);
+
   return (
     <div className="flex flex-col gap-5">
       <LanguageSelector
@@ -31,7 +32,11 @@ const CvDisplay = () => {
 
       <div className="flex flex-row justify-evenly">
         <DisplayCvButton pdfLink={pdfLink} />
-        <ModifyButton pdfLink={pdfLink} selectedLanguage={selectedLanguage} />
+        <ModifyButton
+          pdfLink={pdfLink}
+          selectedLanguage={selectedLanguage}
+          setPdfLink={setPdfLink}
+        />
       </div>
     </div>
   );
