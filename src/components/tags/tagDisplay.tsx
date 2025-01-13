@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { deleteTag, getTags } from "../../store/slices/tagSlice";
 import {
   CircularProgress,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -13,11 +12,11 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteButton from "../shared/deleteButton";
 import { loadIcon } from "./iconMapper";
 import { IconType } from "react-icons/lib";
 import TagIconDisplay from "./tagIconDisplay";
+import EditButton from "./editButton";
 
 const TagDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,10 +38,7 @@ const TagDisplay = () => {
               const selectedIcon = await loadIcon(tag.Icon);
               return [tag.Icon, selectedIcon as IconType];
             } catch (error) {
-              console.error(
-                `Failed to load icon for tag: ${tag.Icon}`,
-                error,
-              );
+              console.error(`Failed to load icon for tag: ${tag.Icon}`, error);
               return null;
             }
           }),
@@ -57,10 +53,6 @@ const TagDisplay = () => {
       loadIcons();
     }
   }, [tags, loading]);
-
-  const editTag = (tagId: Number) => {
-    console.log(tagId);
-  };
 
   if (loading) return <CircularProgress />;
   if (error) return <p>Error: {error}</p>;
@@ -83,14 +75,7 @@ const TagDisplay = () => {
               </TableCell>
               <TableCell>{tag.Tag}</TableCell>
               <TableCell>
-                <IconButton
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    editTag(tag.TagId);
-                  }}
-                >
-                  <EditIcon />
-                </IconButton>
+                <EditButton TagId={tag.TagId} Tag={tag.Tag} Icon={tag.Icon} />
               </TableCell>
               <TableCell>
                 <DeleteButton

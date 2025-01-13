@@ -40,13 +40,12 @@ function SignInForm() {
   }, [authState.token, navigate]);
 
   return (
-    <div className="container flex flex-col justify-center items-center p-2">
-      <h2 className="text-xl">Sign in</h2>
-
+    <div className="flex flex-col justify-center items-center p-10 m-10">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-5 justify-center items-center border"
+        className="flex flex-col gap-5 justify-center items-center border p-10"
       >
+        <h2 className="text-xl">Sign in</h2>
         <TextField
           type="text"
           label="Username"

@@ -2,7 +2,7 @@ import SignInForm from "../components/signInForm"
 
 const SignInPage = () =>{
   return(
-  <div className="flex-grow justify-center items-center">
+  <div className="w-full flex-grow justify-center items-center">
       <SignInForm />
     </div>
   )

@@ -15,10 +15,10 @@ export interface Project {
   Demo_Link: string | null;
   Github_Link: string | null;
   Status: ProjectStatus;
-  Logo_Path: string | null;
+  Logo_Path: string;
   DevDate: Date;
   Hidden: boolean;
-  Tags: Tag[]
+  Tags: Tag[];
 }
 
 interface ProjectState {
@@ -39,7 +39,7 @@ export const getProjects = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project", {
+      const response = await fetch("http://localhost:6001/project/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -132,6 +132,39 @@ export const createProject = createAsyncThunk(
   },
 );
 
+export const updateProject = createAsyncThunk(
+  "projects/updateProject",
+  async (project: Project, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const authState = (getState() as RootState).auth;
+      const token = authState.token;
+      const response = await fetch("http://localhost:6001/project", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify(project),
+      });
+
+      if (response.status === 401) {
+        dispatch(logout());
+        return;
+      }
+
+      if (!response.ok) {
+        const error = await response.text();
+        return rejectWithValue(error);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const projectSlice = createSlice({
   name: "projects",
   initialState,
@@ -175,6 +208,22 @@ const projectSlice = createSlice({
         state.projects = [...state.projects, action.payload];
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.loading = false;
+        let tempProjects = state.projects.filter(
+          (project) => project.ProjectID !== action.payload,
+        );
+
+        state.projects = [...tempProjects, action.payload];
+      })
+      .addCase(updateProject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
