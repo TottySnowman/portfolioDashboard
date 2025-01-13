@@ -34,5 +34,5 @@ jobs:
           context: .
           push: true
           tags: | 
-            reg.paul-wortmann.me/portfolio_dashboard/:latest
+            reg.paul-wortmann.me/portfolio_dashboard:latest
             reg.paul-wortmann.me/portfolio_dashboard/portfolio_dashboard:${{ github.sha }}
