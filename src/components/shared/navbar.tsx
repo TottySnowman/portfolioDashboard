@@ -29,6 +29,10 @@ const pages: singlePage[] = [
     displayName: "CV",
     url: "/cv",
   },
+  {
+    displayName: "Knowledge",
+    url: "/knowledge",
+  },
 ];
 
 const Navbar = () => {
