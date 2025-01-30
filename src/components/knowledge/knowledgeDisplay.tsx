@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/store";
-import { deleteProject, getProjects } from "../../store/slices/projectSlice";
 import {
   CircularProgress,
   Paper,
@@ -12,16 +11,17 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import DeleteButton from "../shared/deleteButton";
+import { getKnowledge } from "../../store/slices/knowledgeSlice";
+import EditButton from "./editButton";
 
 const KnowledgeBaseDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { projects, loading, error } = useSelector(
-    (state: RootState) => state.project,
+  const { knowledges, loading, error } = useSelector(
+    (state: RootState) => state.knowledge,
   );
 
   useEffect(() => {
-    dispatch(getProjects());
+    dispatch(getKnowledge());
   }, [dispatch]);
 
   if (loading) return <CircularProgress />;
@@ -31,40 +31,23 @@ const KnowledgeBaseDisplay = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Image</TableCell>
-            <TableCell>Title</TableCell>
-            <TableCell>Dev date</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Displayed</TableCell>
+            <TableCell>Text</TableCell>
             <TableCell></TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {projects.map((project) => (
+          {knowledges.map((knowledge) => (
             <TableRow
-              key={project.ProjectID}
+              key={knowledge.PointId}
               hover
               style={{ cursor: "pointer" }}
             >
-              <TableCell className="w-1/6 h-1/2">
-                <img src={project.Logo_Path ? project.Logo_Path : ""} />
-              </TableCell>
-              <TableCell>{project.Name}</TableCell>
-              <TableCell>{project.DevDate.toString().split("T")[0]}</TableCell>
-              <TableCell>{project.Status.Status}</TableCell>
-              <TableCell>{project.Hidden ? "Hidden" : "Shown"}</TableCell>
+              <TableCell>{knowledge.Prompt}</TableCell>
               <TableCell>
-                <p>Super sick button</p>
+                <EditButton PointId={knowledge.PointId} Prompt={knowledge.Prompt} />
               </TableCell>
-              <TableCell>
-                <DeleteButton
-                  deleteFunction={() =>
-                    dispatch(deleteProject(project.ProjectID))
-                  }
-                  displayName={`project ${project.Name}`}
-                />
-              </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           ))}
         </TableBody>
