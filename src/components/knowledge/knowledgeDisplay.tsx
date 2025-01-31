@@ -11,8 +11,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { getKnowledge } from "../../store/slices/knowledgeSlice";
+import {
+  deleteKnowledge,
+  getKnowledge,
+} from "../../store/slices/knowledgeSlice";
 import EditButton from "./editButton";
+import DeleteButton from "../shared/deleteButton";
 
 const KnowledgeBaseDisplay = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,15 +43,25 @@ const KnowledgeBaseDisplay = () => {
         <TableBody>
           {knowledges.map((knowledge) => (
             <TableRow
-              key={knowledge.PointId}
+              key={knowledge.pointId}
               hover
               style={{ cursor: "pointer" }}
             >
               <TableCell>{knowledge.Prompt}</TableCell>
               <TableCell>
-                <EditButton PointId={knowledge.PointId} Prompt={knowledge.Prompt} />
+                <EditButton
+                  pointId={knowledge.pointId}
+                  Prompt={knowledge.Prompt}
+                />
               </TableCell>
-              <TableCell></TableCell>
+              <TableCell>
+                <DeleteButton
+                  deleteFunction={() =>
+                    dispatch(deleteKnowledge({ pointId: knowledge.pointId }))
+                  }
+                  displayName={`knowledge ${knowledge.Prompt}`}
+                />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -25,8 +25,9 @@ const EditButton = (existingKnowledge: knowledge) => {
   };
 
   const onSubmit = (data: KnowledgeFormData) => {
+    console.log(existingKnowledge.pointId)
     var knowledge: knowledge = {
-      PointId: existingKnowledge.PointId,
+      pointId: existingKnowledge.pointId,
       Prompt: data.knowledgeText
     };
     dispatch(updateKnowledge(knowledge))

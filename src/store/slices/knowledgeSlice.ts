@@ -3,8 +3,12 @@ import { RootState } from "../store";
 import { logout } from "./authSlice";
 
 export interface knowledge {
-  PointId: string;
+  pointId: string;
   Prompt: string;
+}
+
+export interface knowledgeDeleteModel{
+  pointId:string
 }
 
 interface knowledgeState {
@@ -53,16 +57,17 @@ export const getKnowledge = createAsyncThunk(
 
 export const deleteKnowledge = createAsyncThunk(
   "knowledge/deleteKnowledge",
-  async (id: string, { rejectWithValue, getState, dispatch }) => {
+  async (deleteModel: knowledgeDeleteModel, { rejectWithValue, getState, dispatch }) => {
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/knowledge/" + id, {
+      const response = await fetch("http://localhost:6001/knowledge", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
+        body: JSON.stringify(deleteModel)
       });
 
       if (response.status === 401) {
@@ -75,7 +80,7 @@ export const deleteKnowledge = createAsyncThunk(
         return rejectWithValue(error);
       }
 
-      return id;
+      return deleteModel.pointId;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -178,7 +183,7 @@ const knowledgeSlice = createSlice({
       .addCase(deleteKnowledge.fulfilled, (state, action) => {
         state.loading = false;
         state.knowledges = state.knowledges.filter(
-          (knowledge) => knowledge.PointId !== action.payload,
+          (knowledge) => knowledge.pointId !== action.payload,
         );
       })
       .addCase(deleteKnowledge.rejected, (state, action) => {
@@ -192,7 +197,7 @@ const knowledgeSlice = createSlice({
       .addCase(updateKnowledge.fulfilled, (state, action) => {
         state.loading = false;
         let knowledgeWithout = state.knowledges.filter(
-          (knowledge) => knowledge.PointId !== action.payload.pointId,
+          (knowledge) => knowledge.pointId !== action.payload.pointId,
         );
         state.knowledges = [...knowledgeWithout, action.payload];
       })
