@@ -26,7 +26,7 @@ const AddKnowledgeButton = () => {
   const onSubmit = (data: KnowledgeFormData) => {
     var knowledge: knowledge = {
       Prompt: data.knowledgeText,
-      PointId: ""
+      pointId: ""
     };
     dispatch(createKnowledge(knowledge))
       .unwrap()
