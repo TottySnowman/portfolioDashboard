@@ -39,7 +39,7 @@ export const getProjects = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/project/all`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}project/all`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
