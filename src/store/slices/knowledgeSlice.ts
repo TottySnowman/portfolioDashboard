@@ -29,7 +29,7 @@ export const getKnowledge = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/knowledge", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}knowledge`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const deleteKnowledge = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/knowledge", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}knowledge`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export const createKnowledge = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/knowledge", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}knowledge`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export const updateKnowledge = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/knowledge", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}knowledge`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

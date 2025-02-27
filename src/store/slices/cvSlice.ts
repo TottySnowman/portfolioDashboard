@@ -22,7 +22,7 @@ export const CheckExistingCv = createAsyncThunk(
   async (language: string, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:6001/cv/${language}/cv.pdf`,
+        `${import.meta.env.VITE_API_URL}cv/${language}/cv.pdf`,
         {
           method: "HEAD",
         },
@@ -32,7 +32,7 @@ export const CheckExistingCv = createAsyncThunk(
         return rejectWithValue("");
       }
 
-      return `http://localhost:6001/cv/${language}/cv.pdf`;
+      return `${import.meta.env.VITE_API_URL}cv/${language}/cv.pdf`;
     } catch (error) {
       console.log(error);
       return rejectWithValue(error);
@@ -49,7 +49,7 @@ export const PostCv = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/cv", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}cv`, {
         method: "POST",
         headers: {
           Authorization: "Bearer " + token,

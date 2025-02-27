@@ -26,7 +26,7 @@ export const getTags = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/tag", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}tag`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export const deleteTag = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/tag/" + id, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}tag/` + id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +89,7 @@ export const createTag = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/tag", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}tag`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +122,7 @@ export const updateTag = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/tag", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}tag`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

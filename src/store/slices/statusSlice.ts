@@ -25,7 +25,7 @@ export const getStatus = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/status", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}status`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
