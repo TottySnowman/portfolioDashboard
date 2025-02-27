@@ -20,7 +20,7 @@ export const PostLogo = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/logo", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}logo` , {
         method: "POST",
         headers: {
           Authorization: "Bearer " + token,
@@ -53,7 +53,7 @@ export const DeleteLogo = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/logo", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}logo`, {
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + token,

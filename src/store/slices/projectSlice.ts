@@ -39,7 +39,7 @@ export const getProjects = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project/all", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}project/all`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export const deleteProject = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project/" + id, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}project/` + id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +105,7 @@ export const createProject = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}project`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -138,7 +138,7 @@ export const updateProject = createAsyncThunk(
     try {
       const authState = (getState() as RootState).auth;
       const token = authState.token;
-      const response = await fetch("http://localhost:6001/project", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}project`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
