@@ -26,7 +26,7 @@ export const signIn = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signIn`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}auth/signIn`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
